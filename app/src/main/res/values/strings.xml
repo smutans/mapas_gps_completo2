@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Usjt ccp3 anbua Ciclo de Vida GPS e Mapas</string>
+    <string name="action_settings">Settings</string>
+    <string name="no_gps_no_app">Sem o GPS o aplicativo não funciona</string>
+    <string name="buscaEditText">DIGITE O QUE DESEJA BUSCAR</string>
+    <string name="buscaVazia">Precisa digitar um termo!</string>
+    <string name="teste">*teste*</string>
+</resources>
