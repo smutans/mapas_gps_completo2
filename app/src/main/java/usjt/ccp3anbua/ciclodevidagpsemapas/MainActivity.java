@@ -38,8 +38,6 @@ public class MainActivity extends AppCompatActivity {
 
     private String termo;
 
-    private Integer qtdElementosLista = 0;
-
     public ArrayList<String> novaLista = new ArrayList<>();
 
 
@@ -97,19 +95,17 @@ public class MainActivity extends AppCompatActivity {
                 latitudeAtual = latitude;
                 longitudeAtual = longitude;
 
-                if (qtdElementosLista >= 50) {
-                    qtdElementosLista = 1;
+                if (novaLista.size() >= 50){
+                    novaLista.remove(0);
                 }
 
-                novaLista.add(qtdElementosLista, String.format("%f:%f", latitude, longitude));
 
-                qtdElementosLista ++;
-
+                novaLista.add(String.format("%f:%f", latitudeAtual, longitudeAtual));
+//
                 //locationTextView.setText(String.format("Lat: %f, Long: %f", latitude, longitude));
 
+                Toast.makeText(MainActivity.this, latitudeAtual+","+longitudeAtual,Toast.LENGTH_SHORT).show();
 
-
-                Toast.makeText(MainActivity.this, getString(R.string.teste), Toast.LENGTH_SHORT).show();
             }
 
             @Override
