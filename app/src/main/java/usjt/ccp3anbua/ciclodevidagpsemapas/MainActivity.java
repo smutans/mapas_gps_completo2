@@ -14,11 +14,16 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,14 +36,16 @@ public class MainActivity extends AppCompatActivity {
     private LocationListener locationListener;
 
     private double latitude, longitude;
-    private double latitudeAtual, longitudeAtual;
+
 
     private TextView locationTextView;
     private EditText locationEditText;
 
     private String termo;
 
-    public ArrayList<String> novaLista = new ArrayList<>();
+    private RecyclerView localizacaoRecyclerView;
+    private LocalizacaoAdapter adapter;
+    private List<Localizacao> localizacoes;
 
 
 
@@ -49,36 +56,31 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        locationTextView = findViewById(R.id.locationTextView);
-//        locationEditText = findViewById(R.id.locationEditText);
+
+        RecyclerView = findViewById(R.id.localizacaoRecyclerView);
+        localizacoes = new ArrayList<>();
+
+        adapter = new LocalizacaoAdapter(this, localizacoes);
+
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        localizacaoRecyclerView.setAdapter(adapter);
+        localizacaoRecyclerView.setLayoutManager(llm);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
 
                 Intent intent = new Intent(MainActivity.this, ListaCoordenadas.class);
                 Bundle bundle = new Bundle();
                 bundle.putStringArrayList("lista",novaLista);
                 intent.putExtras(bundle);
                 startActivity(intent);
-
-
-//                termo = locationEditText.getText().toString();
-//
-//                if (termo.isEmpty()){
-//                    Toast.makeText(MainActivity.this, getString(R.string.buscaVazia), Toast.LENGTH_SHORT).show();
-//                } else {
-//                    Uri gmmIntentUri = Uri.parse(String.format("geo:%f,%f?q=%s", latitudeAtual, longitudeAtual, termo));
-//                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-//                    mapIntent.setPackage("com.google.android.apps.maps");
-//                    startActivity(mapIntent);
-//                }
-
-
             }
         });
+
 
 
         // Classe do Android que permite obter localizações GPS/GSM....
@@ -89,22 +91,12 @@ public class MainActivity extends AppCompatActivity {
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
 
-                latitudeAtual = latitude;
-                longitudeAtual = longitude;
-
-                if (novaLista.size() >= 50){
-                    novaLista.remove(0);
-                }
+                // Grava cada localização em um ArrayList de Objetos do tipo Localização
+                listaLocalizacao.add(new Localizacao(location.getLatitude(), location.getLongitude()));
 
 
-                novaLista.add(String.format("%f:%f", latitudeAtual, longitudeAtual));
-//
-                //locationTextView.setText(String.format("Lat: %f, Long: %f", latitude, longitude));
-
-                Toast.makeText(MainActivity.this, latitudeAtual+","+longitudeAtual,Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Qtd: " + listaLocalizacao.size(),Toast.LENGTH_SHORT).show();
 
             }
 
@@ -122,6 +114,62 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+    }
+
+    class LocalizacaoViewHolder extends RecyclerView.ViewHolder{
+
+        public TextView latitudeTextView;
+        public TextView longitudeTextView;
+
+        public LocalizacaoViewHolder (View raiz){
+            super (raiz);
+
+            this.latitudeTextView =
+                    raiz.findViewById(R.id.latitudeTextView);
+            this.longitudeTextView =
+                    raiz.findViewById(R.id.longitudeTextView);
+
+        }
+    }
+
+    class LocalizacaoAdapter extends RecyclerView.Adapter <LocalizacaoViewHolder>{
+
+        private Context context;
+        private List<Localizacao> localizacoes;
+
+        public LocalizacaoAdapter(Context context, List<Localizacao> localizcoes) {
+            this.context = context;
+            this.localizacoes = localizacoes;
+        }
+
+        @NonNull
+        @Override
+        public LocalizacaoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LayoutInflater inflater =
+                    LayoutInflater.from(context);
+            View raiz = inflater.inflate(R.layout.content_main,parent,false);
+
+
+            return new LocalizacaoViewHolder(raiz);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull LocalizacaoViewHolder holder, int position) {
+
+            Localizacao w = localizacoes.get(position);
+
+            holder.latitudeTextView.setText(
+                    context.getString(latitude)
+            );
+            holder.longitudeTextView.setText(
+                    context.getString(longitude)
+            );
+        }
+
+        @Override
+        public int getItemCount() {
+            return localizacoes.size();
+        }
     }
 
 
